@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<!-- saved from url=(0039)https://zju3dv.github.io/Motion-2-to-3/ -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta content="Mpcap-2-to-3" name="title">
+    <meta content="This paper is a diffusion-based multi-view Lifting framework that leverages homologous 2D data pre-training to reconstruct metric-accurate 3D human motions with absolute world positions from monocular inputs." name="description">
+    
+    <meta content="English" name="language">
+    <meta content="Zhumei Wang" name="author">
+    <title>Mocap-2-to-3</title>
+    <!-- Bootstrap -->
+    <!-- <script src="js/video_comparison.js"></script> -->
+    <script src="./Mocap-2-to-3_files/jquery-3.4.1.min.js"></script>
+    <script src="./Mocap-2-to-3_files/bootstrap-4.4.1.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="./Mocap-2-to-3_files/bootstrap-4.4.1.css" rel="stylesheet">
+    <link href="./Mocap-2-to-3_files/academicons.min.css" rel="stylesheet">
+    <link href="./Mocap-2-to-3_files/font-awesome.min.css" rel="stylesheet">
+    <link href="./Mocap-2-to-3_files/css2" rel="stylesheet">
+    <link href="./Mocap-2-to-3_files/katex.min.css" rel="stylesheet">
+    <!-- <link href="img/favicon.svg" rel="icon" sizes="any" type="image/svg+xml" /> -->
+
+    <script src="./Mocap-2-to-3_files/katex.min.js"></script>
+    <script src="./Mocap-2-to-3_files/auto-render.min.js"></script>
+
+    <style>
+        code {
+            white-space: pre-wrap;
+        }
+
+        body {
+            font-family: 'Jost';
+        }
+
+        b {
+            font-weight: black;
+        }
+
+        strong {
+            font-weight: bold;
+        }
+
+        section>h5 {
+            padding-bottom: 30px;
+        }
+
+        .col-12>h3 {
+            padding-top: 5px;
+        }
+
+        .results-section {
+            padding-bottom: 30px;
+        }
+
+        .carousel-control-prev,
+        .carousel-control-next {
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .carousel-control-prev {
+            left: 25px;
+        }
+
+        .carousel-control-next {
+            right: 25px;
+        }
+
+        .carousel-indicators {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            bottom: 0%;
+            left: 90%;
+
+            /* Adjust vertical position */
+            text-align: center;
+            /* Center the content horizontally */
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .carousel-indicators li {
+            background-color: transparent;
+            /* Hide the default Bootstrap indicators */
+            border: none;
+            /* Remove border */
+            margin: 0 25px;
+            display: inline-block;
+        }
+
+        .indicator-dot {
+            display: inline-block;
+            width: 15px;
+            height: 15px;
+            text-indent: -999px;
+            border: none;
+            border-radius: 10px;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .row.sm-gutters {
+            margin-right: 5px;
+            margin-left: 5px;
+            margin-top: 5px;
+            margin-bottom: 5px;
+        }
+
+        .row.sm-gutters>.col-md-4 {
+            padding-right: 5px;
+            padding-left: 5px;
+            padding-top: 5px;
+            padding-bottom: 5px;
+        }
+
+        .row.sm-gutters>.col-md-6 {
+            padding-right: 5px;
+            padding-left: 5px;
+            padding-top: 5px;
+            padding-bottom: 5px;
+        }
+
+        .row.sm-gutters>.col-md-12 {
+            padding-top: 5px;
+            padding-bottom: 5px;
+            padding-right: 5px;
+            padding-left: 5px;
+        }
+
+        .renbody-zoom-container {
+            width: 80%;
+            /* Or whatever size you want */
+            aspect-ratio: 0.75;
+            /* Or whatever size you want */
+            overflow: hidden;
+            /* Hide the parts of the video outside the container */
+            object-fit: cover;
+            /* Make sure the video covers the container without stretching */
+            object-position: center;
+            /* Center the video */
+            border-radius: 5px;
+        }
+
+        .mobile-zoom-container {
+            width: 100%;
+            /* Or whatever size you want */
+            aspect-ratio: 0.75;
+            /* Or whatever size you want */
+            overflow: hidden;
+            /* Hide the parts of the video outside the container */
+            object-fit: cover;
+            /* Make sure the video covers the container without stretching */
+            object-position: center;
+            /* Center the video */
+            border-radius: 5px;
+            margin: 5px
+        }
+
+        .video-zoom-container {
+            overflow: hidden;
+            /* Hide the parts of the video outside the container */
+            object-fit: cover;
+            /* Make sure the video covers the container without stretching */
+            object-position: center;
+            border-radius: 5px;
+            margin: 5px;
+        }
+
+        .zoom-element {
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .zoom-element:hover {
+            transform: scale(1.);
+        }
+
+        .nhr-zoom {
+            transform: scale(1.45);
+        }
+
+        .renbody-zoom {
+            transform: scale(1.65) translateY(2%);
+            border-radius: 5px;
+        }
+
+        .mobile-zoom {
+            transform: scale(1.65);
+            border-radius: 5px;
+        }
+
+        .zjumocap-zoom {
+            transform: scale(1.3);
+        }
+
+        video {
+            border-radius: 5px;
+            padding: 0px;
+            margin: 0px;
+        }
+
+        .comparison-canvas {
+            padding: 0px;
+            margin: 0px;
+            border-radius: 5px;
+        }
+
+        .a16x9 {
+            aspect-ratio: 16/9;
+        }
+
+        .a4x3 {
+            aspect-ratio: 1352/1014;
+        }
+
+        .a1x1 {
+            aspect-ratio: 1;
+        }
+
+        .a16x9demo {
+            aspect-ratio: 3.05;
+        }
+
+        .a4x3demo {
+            aspect-ratio: 2.0;
+        }
+
+        .a1x1demo {
+            aspect-ratio: 1600/1672;
+        }
+    </style>
+    <script>
+
+
+
+    </script>
+    
+</head>
+
+<body>
+    <!-- cover -->
+    <section>
+        <div class="jumbotron text-center mt-0">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <h1 style="font-weight: bold">
+                            <b>
+                                <!-- <br> -->
+                                <span style="color: #78aa58">Mocap</span>-<span style="color: #6589bf">2</span>-to-<span style="color: #c68b5b">3</span>:
+                                 <span style="color: #c68b5b">Multi-view Lifting</span> for Monocular Motion Recovery with
+                                <span style="color: #6589bf">2D Pretraining</span>
+                            </b>
+                        </h1>
+                        <!-- <h4 style="color:#5a6268;">Arxiv 2024</h4> -->
+                        <hr>
+                            Zhumei Wang<sup>1,2</sup>&nbsp;
+                            Zechen Hu<sup>3</sup>&nbsp;
+                            Ruoxi Guo<sup>4</sup>&nbsp;
+                            Huaijin Pi<sup>4,5</sup>&nbsp;
+                            Ziyong Feng<sup>3</sup>&nbsp;
+                            Sida Peng<sup>4</sup>&nbsp;
+                            Xiaowei Zhou<sup>4</sup>&nbsp;
+                            Mingtao Pei<sup>1</sup>&nbsp;
+                            Siyuan Huang<sup>2</sup>&nbsp;
+                        </a>
+                        <p>
+                            <sup>1</sup>School of Computer Science and Technology, Beijing Institute of Technology&nbsp;&nbsp;&nbsp;
+                            <br>
+                            <sup>2</sup>State Key Laboratory of General Artificial Intelligence, BIGAI&nbsp;&nbsp;&nbsp;
+                            <br>
+                            <sup>3</sup>Deep Glint&nbsp;&nbsp;&nbsp;<sup>4</sup>Zhejiang University&nbsp;&nbsp;&nbsp;<sup>4</sup>The University of Hong Kong
+                        </p>
+                        <div class="row justify-content-center">
+                            <div class="column">
+                                <p class="mb-5">
+                                    <a class="btn btn-large btn-light" href="https://arxiv.org/pdf/2503.03222" role="button" target="_blank">
+                                        <i class="fa fa-file-pdf-o"></i>
+                                        <b>Paper</b>
+                                    </a>
+                                </p>
+                            </div>
+                            <div class="column">
+                                <p class="mb-5">
+                                    <a class="btn btn-large btn-light" href="" role="button" target="_blank">
+                                        <i class="fa fa-github"></i>
+                                        <b>Code</b>
+                                    </a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <h3>TL;DR</h3>
+                    <hr style="margin-top: 0px">
+                    <p class="text-left">
+                        (1) This paper focuses on recovering 3D human motions with absolute world positions from monocular inputs.
+                        💃 <br>
+                        (2) The key idea is to use a diffusion-based <span style="color: #c68b5b">multi-view lifting framework</span> that leverages <span style="color: #6589bf">homologous 2D data pre-training</span> to improve 3D motion capture quality.💪
+                        <br>
+                        (3) To recover absolute positions in world coordinates, we propose a new representation that decouples local pose and global movement, and then encode the ground plane to accelerate convergence.🎉
+                        <!-- <br> -->
+                        <!-- (4)Therefore, the model obtains <strong>realistic</strong> 3D human motion generation results
+                        and boradens the
+                        range of motion types. 🎉 -->
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <h3>Video</h3>
+                    <hr style="margin-top: 0px">
+                    <div class="embed-responsive embed-responsive-16by9">
+                        <video width="60%" controls="controls">
+                            <source src="video/Mocap2-3.MP4" type="video/mp4">
+                        </video>
+                    </div>
+                </div>
+            </div>
+    </div></section>
+    <br>
+    <section>
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <h3>Abstract</h3>
+                    <hr style="margin-top: 0px">
+                    <img src="./Mocap-2-to-3_files/teaser.png" width="100%">
+                    <p style="font-size: small;">(a) Traditional framework for direct 3D motion regression. (b) Mocap-2-to-3: our multi-view lifting framework from monocular input which leverages 2D pretraining to enhance 3D motion capture. (c) The model outputs global motions with absolute position from monocular 2D pose input while maintaining OOD generalization capability. (d) The model also supports COCO-format keypoint estimation. </p>
+                    <p class="text-left">
+                        Recovering absolute human motion from monocular inputs is challenging due to two main issues. First, existing methods depend on 3D training data collected from limited environments, constraining out-of-distribution generalization. The second issue is the difficulty of estimating metric-scale poses from monocular input.
+                          To address these challenges, we introduce Mocap-2-to-3, a novel framework that performs multi-view lifting from monocular input by leveraging 2D data pre-training, enabling the reconstruction of metrically accurate 3D motions with absolute positions.
+                          To leverage abundant 2D data, we decompose complex 3D motion into multi-view syntheses. We first pretrain a single-view diffusion model on extensive 2D datasets, then fine-tune a multi-view model using public 3D data to enable view-consistent motion generation from monocular input, allowing the model to acquire action priors and diversity through 2D data. 
+                          Furthermore, to recover absolute poses, we propose a novel human motion representation that decouples the learning of local pose and global movements, while encoding geometric priors of the ground to accelerate convergence. This enables progressive recovery of motion in absolute space during inference.
+                          Experimental results on in-the-wild benchmarks demonstrate that our method surpasses state-of-the-art approaches in both camera-space motion realism and world-grounded human positioning, while exhibiting superior generalization capability.
+                          Our code will be made publicly available.
+                        <br>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <h3>Method</h3>
+                    <hr style="margin-top: 0px">
+                </div>
+                <div class="col-12">
+                    <div style="display: flex; justify-content: center;">
+                        <img src="./Mocap-2-to-3_files/pipeline.png" width="80%">
+                    </div>
+                    <p>
+                        <strong>Pipeline</strong>.
+                        During training: (a) We first train an arbitrary single-view 2D Motion Diffusion Model. (b) Its weights are then used to initialize a Multi-view Diffusion Model, conditioned on 2D pose sequences from $V_0$ and pointmaps. During inference, the Multi-view Model generates motions for other views.(c) We compute local poses and global movement to recover global coordinates $(u,v)$ for each view. (d) Multi-view triangulation is then used to synthesize 3D absolute poses, (e) resulting in full-body global human motion.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <br>
+    <section>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <h3>Comparsion video</h3>
+                    <hr style="margin-top: 0px">
+                    <div class="embed-responsive embed-responsive-16by9">
+                        <video width="60%" controls="controls">
+                            <source src="video/compressed.MP4" type="video/mp4">
+                        </video>
+                        <br>
+                    </div>
+                </div>
+            </div>
+    </div></section>
+    <br>
+    <br>
+    <section>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <h3>More Results</h3>
+                    <hr style="margin-top: 0px">
+                    <div class="embed-responsive embed-responsive-16by9">
+                        <video width="60%" controls="controls">
+                            <source src="video/rich.MP4" type="video/mp4">
+                        </video>
+                        <br>
+                    </div>
+                </div>
+            </div>
+    </div></section>
+
+
+
+    <!-- citing -->
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <br>
+                <br>
+                <h3>Citation</h3>
+                <hr style="margin-top: 0px">
+                <pre style="background-color: #e9eeef; padding: 1.5em 1.5em; border-radius: 20px"><code>@article{wang2025mocap,
+  title={Mocap-2-to-3: Lifting 2D Diffusion-Based Pretrained Models for 3D Motion Capture},
+  author={Wang, Zhumei and Hu, Zechen and Guo, Ruoxi and Pi, Huaijin and Feng, Ziyong and Peng, Sida and Zhou, Xiaowei},
+  journal={arXiv preprint arXiv:2503.03222},
+  year={2025}
+}</code></pre>
+                <hr>
+            </div>
+        </div>
+    </div>
+
+    <footer class="text-center" style="margin-bottom: 10px">
+        Thanks to
+        <a href="https://lioryariv.github.io/" target="_blank">Lior Yariv</a>
+        for the website template.
+        <br>
+        Thanks to the
+        <a href="https://zju3dv.github.io/Motion-2-to-3/" target="_blank">Motion-2-to-3 project page</a>
+        for the useful add-ons.
+        <br>
+        Thanks to the
+        <a href="https://zju3dv.github.io/gvhmr/" target="_blank">GVHMR project page</a>
+        for the useful add-ons.
+    </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Math
+            renderMathInElement(document.body, {
+                delimiters: [
+                    { left: "$", right: "$", display: false },
+                    { left: "$$", right: "$$", display: true }
+                ]
+            });
+
+        });
+
+        // Add a carousel to the page
+        function createVideoCarousel(videos, targetId, options = {}) {
+            const section = document.getElementById(targetId);
+            if (!section) {
+                console.error(`Element with id '${targetId}' not found.`);
+                return;
+            }
+
+            const { controls = true, interval = 10000, ratioTemplate = "a16x9demo" } = options;
+
+            const container = document.createElement('div');
+            container.className = 'container';
+
+            const row = document.createElement('div');
+            row.className = 'row justify-content-center';
+
+            const col = document.createElement('div');
+            col.className = 'col-md-12 text-center';
+
+            const carousel = document.createElement('div');
+            carousel.className = 'carousel slide';
+            carousel.id = targetId + 'Carousel';
+            carousel.setAttribute('data-ride', 'carousel');
+            carousel.setAttribute('data-interval', interval);
+
+            const indicators = document.createElement('ol');
+            indicators.className = 'carousel-indicators';
+
+            const carouselInner = document.createElement('div');
+            carouselInner.className = 'carousel-inner';
+
+            videos.forEach((video, index) => {
+                const indicator = document.createElement('li');
+                indicator.setAttribute('data-target', `#${targetId}Carousel`);
+                indicator.setAttribute('data-slide-to', index.toString());
+                if (index === 0) indicator.className = 'active';
+                indicator.innerHTML = `<span class="indicator-dot"></span>`;
+                indicators.appendChild(indicator);
+
+                const carouselItem = document.createElement('div');
+                carouselItem.className = `carousel-item ${index === 0 ? 'active' : ''}`;
+
+                const innerRow = document.createElement('div');
+                innerRow.className = 'row sm-gutters';
+
+                const innerCol = document.createElement('div');
+                innerCol.className = 'col-md-12';
+
+                const videoElement = document.createElement('video');
+                videoElement.className = ratioTemplate;
+                videoElement.setAttribute('width', '100%');
+                videoElement.setAttribute('autoplay', '');
+                // related issue: https://6a00999f-abaa-379e-ae7a-6c126b9833cb.kunlun-6swnhz2o-dotu.xyz/link/rfFXnT7NvfEtXoRp?list=shadowrocket
+                // videoElement.setAttribute('muted', '');
+                videoElement.muted = true;
+                videoElement.setAttribute('playsinline', '');
+                videoElement.setAttribute('loop', '');
+                if (controls) videoElement.setAttribute('controls', '');
+                videoElement.setAttribute('poster', video.poster || 'img/spinner.svg');
+
+                const source = document.createElement('source');
+                source.src = video.src;
+                source.type = 'video/mp4';
+                videoElement.appendChild(source);
+
+                innerCol.appendChild(videoElement);
+                innerRow.appendChild(innerCol);
+                carouselItem.appendChild(innerRow);
+                carouselInner.appendChild(carouselItem);
+            });
+
+            const prevControl = document.createElement('a');
+            prevControl.className = 'carousel-control-prev';
+            prevControl.setAttribute('href', `#${targetId}Carousel`);
+            prevControl.setAttribute('role', 'button');
+            prevControl.setAttribute('data-slide', 'prev');
+            const prevIcon = document.createElement('span');
+            prevIcon.className = 'carousel-control-prev-icon';
+            prevIcon.setAttribute('aria-hidden', 'true');
+            const prevText = document.createElement('span');
+            prevText.className = 'sr-only';
+            prevText.textContent = 'Previous';
+            prevControl.appendChild(prevIcon);
+            prevControl.appendChild(prevText);
+
+            const nextControl = document.createElement('a');
+            nextControl.className = 'carousel-control-next';
+            nextControl.setAttribute('href', `#${targetId}Carousel`);
+            nextControl.setAttribute('role', 'button');
+            nextControl.setAttribute('data-slide', 'next');
+            const nextIcon = document.createElement('span');
+            nextIcon.className = 'carousel-control-next-icon';
+            nextIcon.setAttribute('aria-hidden', 'true');
+            const nextText = document.createElement('span');
+            nextText.className = 'sr-only';
+            nextText.textContent = 'Next';
+            nextControl.appendChild(nextIcon);
+            nextControl.appendChild(nextText);
+
+            carousel.appendChild(indicators);
+            carousel.appendChild(carouselInner);
+            col.appendChild(carousel);
+            col.appendChild(prevControl);
+            col.appendChild(nextControl);
+            row.appendChild(col);
+            container.appendChild(row);
+            section.appendChild(container);
+
+        }
+
+        //
+        const bkgd_videos = [
+            { src: "video/backward.mp4" },
+        ];
+
+        createVideoCarousel(bkgd_videos, 'BkgdVideos', { controls: false, interval: 10000 });
+
+
+        ///////////////////////// More results /////////////////////
+        function createVideoModule(targetId, text, videos, options = {}) {
+            const container = document.createElement('div');
+            container.className = 'container';
+
+            const header = document.createElement('h5');
+            const button = document.createElement('button');
+            button.id = `${targetId}-button`;
+            button.className = 'btn btn-primary';
+            button.type = 'button';
+            button.textContent = text;
+
+            header.appendChild(button);
+            container.appendChild(header);
+
+            const section = document.createElement('section');
+            section.id = targetId;
+            container.appendChild(section);
+
+            // Add click event to the button
+            button.addEventListener('click', function () {
+                createVideoCarousel(videos, targetId, options);
+                this.disabled = true;
+            });
+
+            return container;
+        }
+
+        // Fetch the video lists JSON file, add to the page
+        const videoContainer = document.getElementById('video-modules-container');
+        fetch('video_lists.json')
+            .then(response => response.json())
+            .then(video_lists => {
+                // Manually create button (id+text); Assign each folder to a button
+                videoContainer.appendChild(createVideoModule('v_3dpw', 'Testset (3DPW)', video_lists["3dpw"]));
+                videoContainer.appendChild(createVideoModule('v_rich', 'Testset (RICH)', video_lists["rich"]));
+                videoContainer.appendChild(createVideoModule('v_emdb', 'Testset (EMDB)', video_lists["emdb"]));
+                videoContainer.appendChild(createVideoModule('v_w1', 'Web Videos (Mocap Actor)', video_lists["web_mocapactor"]));
+                videoContainer.appendChild(createVideoModule('v_w2', 'Web Videos (Dance)', video_lists["web_dance"]));
+                videoContainer.appendChild(createVideoModule('v_w3', 'Web Videos (Random)', video_lists["web_random"]));
+                videoContainer.appendChild(createVideoModule('v_w4', 'Web Videos (Sports)', video_lists["web_sports"]));
+            })
+            .catch(error => console.error('Error fetching video list:', error));
+
+
+        // Add RL demos
+        fetch('video_lists.json')
+            .then(response => response.json())
+            .then(video_lists => {
+                createVideoCarousel(video_lists["app_humanoid"], "video-application-modules-container", { "ratioTemplate": "a4x3demo" });
+            })
+            .catch(error => console.error('Error fetching video list:', error));
+
+    </script>
+
+
+</body></html>
