@@ -262,23 +262,26 @@
                         </h1>
                         <!-- <h4 style="color:#5a6268;">Arxiv 2024</h4> -->
                         <hr>
-                            Zhumei Wang<sup>1,2</sup>&nbsp;
-                            Zechen Hu<sup>3</sup>&nbsp;
-                            Ruoxi Guo<sup>4</sup>&nbsp;
-                            Huaijin Pi<sup>4,5</sup>&nbsp;
-                            Ziyong Feng<sup>3</sup>&nbsp;
-                            Sida Peng<sup>4</sup>&nbsp;
-                            Xiaowei Zhou<sup>4</sup>&nbsp;
-                            Mingtao Pei<sup>1</sup>&nbsp;
-                            Siyuan Huang<sup>2</sup>&nbsp;
+                            <a href="https://wangzhumei.github.io/zhumeiwang/">Zhumei Wang<sup>1,2*</sup></a>&nbsp;
+                            <a href="https://wangzhumei.github.io/mocap-2-to-3/">Zechen Hu<sup>3*</sup></a>&nbsp;
+                            <a href="https://www.researchgate.net/profile/Ruoxi-Guo-2">Ruoxi Guo<sup>4</sup></a>&nbsp;
+                            <a href="https://phj128.github.io/">Huaijin Pi<sup>5</sup></a>&nbsp;
+                            <a href="https://wangzhumei.github.io/mocap-2-to-3/">Ziyong Feng<sup>3</sup></a>&nbsp;
+                            <a href="https://wangzhumei.github.io/mocap-2-to-3/">Liang Zhang<sup>6†</sup></a>&nbsp;
+                            <a href="https://wangzhumei.github.io/mocap-2-to-3/">Mingtao Pei<sup>1</sup></a>&nbsp;
+                            <a href="https://siyuanhuang.com/">Siyuan Huang</a><sup>2†</sup>&nbsp;
                         </a>
                         <p>
-                            <sup>1</sup>School of Computer Science and Technology, Beijing Institute of Technology&nbsp;&nbsp;&nbsp;
-                            <br>
+                            <sup>1</sup>Beijing Institute of Technology&nbsp;&nbsp;&nbsp;
                             <sup>2</sup>State Key Laboratory of General Artificial Intelligence, BIGAI&nbsp;&nbsp;&nbsp;
                             <br>
-                            <sup>3</sup>Deep Glint&nbsp;&nbsp;&nbsp;<sup>4</sup>Zhejiang University&nbsp;&nbsp;&nbsp;<sup>4</sup>The University of Hong Kong
+                            <sup>3</sup>Deep Glint&nbsp;&nbsp;&nbsp;<sup>4</sup>Zhejiang University&nbsp;&nbsp;&nbsp;<sup>5</sup>The University of Hong Kong&nbsp;&nbsp;&nbsp;<sup>6</sup>Shandong Agricultural University
                         </p>
+                        <div class="cvpr-badge" style="text-align: center; margin: 15px 0;">
+                            <span style="display: inline-block; background-color: #007bff; color: white; padding: 6px 16px; border-radius: 30px; font-weight: 600; font-size: 1rem; letter-spacing: 0.5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                                CVPR 2026
+                            </span>
+                        </div>
                         <div class="row justify-content-center">
                             <div class="column">
                                 <p class="mb-5">
@@ -292,7 +295,7 @@
                                 <p class="mb-5">
                                     <a class="btn btn-large btn-light" href="" role="button" target="_blank">
                                         <i class="fa fa-github"></i>
-                                        <b>Code</b>
+                                        <b>Code(coming soon)</b>
                                     </a>
                                 </p>
                             </div>
@@ -333,7 +336,7 @@
                     <hr style="margin-top: 0px">
                     <div class="embed-responsive embed-responsive-16by9">
                         <video width="60%" controls="controls">
-                            <source src="./video/Mocap2-3.MP4" type="video/mp4">
+                            <source src="./video/Mocap-2-to-3_demo.mp4" type="video/mp4">
                         </video>
                     </div>
                 </div>
@@ -347,14 +350,9 @@
                     <h3>Abstract</h3>
                     <hr style="margin-top: 0px">
                     <img src="./Mocap-2-to-3_files/teaser.png" width="100%">
-                    <p style="font-size: small;">(a) Traditional framework for direct 3D motion regression. (b) Mocap-2-to-3: our multi-view lifting framework from monocular input which leverages 2D pretraining to enhance 3D motion capture. (c) The model outputs global motions with absolute position from monocular 2D pose input while maintaining OOD generalization capability. (d) The model also supports COCO-format keypoint estimation. </p>
+                    <p style="font-size: small;">(a) Traditional framework for direct 3D motion regression. (b) Mocap-2-to-3: our multi-view lifting framework from monocular input which leverages 2D pretraining to enhance 3D motion capture. (c) The model outputs SMPL-format global motions with absolute position from monocular 2D pose input while maintaining out-of-distribution generalization capability. (d) Our model also supports outputs in the COCO-format keypoint. </p>
                     <p class="text-left">
-                        Recovering absolute human motion from monocular inputs is challenging due to two main issues. First, existing methods depend on 3D training data collected from limited environments, constraining out-of-distribution generalization. The second issue is the difficulty of estimating metric-scale poses from monocular input.
-                          To address these challenges, we introduce Mocap-2-to-3, a novel framework that performs multi-view lifting from monocular input by leveraging 2D data pre-training, enabling the reconstruction of metrically accurate 3D motions with absolute positions.
-                          To leverage abundant 2D data, we decompose complex 3D motion into multi-view syntheses. We first pretrain a single-view diffusion model on extensive 2D datasets, then fine-tune a multi-view model using public 3D data to enable view-consistent motion generation from monocular input, allowing the model to acquire action priors and diversity through 2D data. 
-                          Furthermore, to recover absolute poses, we propose a novel human motion representation that decouples the learning of local pose and global movements, while encoding geometric priors of the ground to accelerate convergence. This enables progressive recovery of motion in absolute space during inference.
-                          Experimental results on in-the-wild benchmarks demonstrate that our method surpasses state-of-the-art approaches in both camera-space motion realism and world-grounded human positioning, while exhibiting superior generalization capability.
-                          Our code will be made publicly available.
+                        Human motion recovery for real-world interaction demands both precise action details and metric-scale trajectories. Recovering absolute human pose from monocular input presents a viable solution, but faces two main challenges: (1) models' reliance on 3D training data from constrained environments limits their out-of-distribution generalization; and (2) the inherent difficulty of estimating metric-scale poses from monocular observations. This paper introduces Mocap-2-to-3, a novel framework that differs from prior HMR methods by recovering absolute poses from monocular input and leveraging abundant 2D data to enhance 3D motion recovery. To effectively utilize the action priors and diversity in large-scale 2D datasets, we reformulate 3D motion as a multi-view synthesis process and divide the training into two stages: a single-view diffusion model is first pre-trained on extensive 2D data, followed by multi-view fine-tuning on 3D data, thus achieving a combination of strong priors and geometric constraints. Furthermore, to recover absolute poses, we introduce a novel human motion representation that decouples the learning of local pose and global movements, while encoding ground geometric priors to accelerate convergence, thereby yielding more precise positioning in the physical world. Experiments on in-the-wild benchmarks show that our method outperforms state-of-the-art approaches in both camera-space motion realism and world-grounded human positioning, while exhibiting strong generalization capability.
                         <br>
                     </p>
                 </div>
@@ -375,7 +373,7 @@
                     </div>
                     <p>
                         <strong>Pipeline</strong>.
-                        During training: (a) We first train an arbitrary single-view 2D Motion Diffusion Model. (b) Its weights are then used to initialize a Multi-view Diffusion Model, conditioned on 2D pose sequences from $V_0$ and pointmaps. During inference, the Multi-view Model generates motions for other views.(c) We compute local poses and global movement to recover global coordinates $(u,v)$ for each view. (d) Multi-view triangulation is then used to synthesize 3D absolute poses, (e) resulting in full-body global human motion.
+                        During training: (a) We first train an arbitrary single-view 2D Motion Diffusion Model. (b) Its weights are then used to initialize a Multi-view Diffusion Model, conditioned on 2D pose sequences from $V_0$ and pointmaps. During inference, the Multi-view Model generates motions for other views.(c) We compute local poses and global movement to recover global coordinates for each view. (d) Multi-view triangulation is then used to synthesize 3D absolute poses, (e) resulting in full-body global human motion.
                     </p>
                 </div>
             </div>
@@ -444,7 +442,7 @@
                 <hr style="margin-top: 0px">
                 <pre style="background-color: #e9eeef; padding: 1.5em 1.5em; border-radius: 20px"><code>@article{wang2025mocap,
   title={Mocap-2-to-3: Multi-view Lifting for Monocular Motion Recovery with 2D Pretraining},
-  author={Wang, Zhumei and Hu, Zechen and Guo, Ruoxi and Pi, Huaijin and Feng, Ziyong and Peng, Sida and Zhou, Xiaowei, Mingtao Pei, Siyuan Huang},
+  author={Wang, Zhumei and Hu, Zechen and Guo, Ruoxi and Pi, Huaijin and Feng, Ziyong and Zhang, Liang and Pei, Mingtao and Huang, Siyuan},
   journal={arXiv preprint arXiv:2503.03222},
   year={2025}
 }</code></pre>
